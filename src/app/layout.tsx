@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { FamilyAlertHandler } from '@/components/family-alert-handler';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
           {children}
         </div>
         <Toaster />
+        <FamilyAlertHandler />
       </body>
     </html>
   );

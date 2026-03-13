@@ -1,7 +1,7 @@
 import { SosButton } from '@/components/sos-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Bell, Map, Mic, ShieldCheck } from 'lucide-react';
+import { Bell, Map, Mic, ShieldCheck, Shield } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -13,11 +13,8 @@ export default function Dashboard() {
       <header className="flex items-center justify-between mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">Provincial Intelligent Safety</h1>
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-green-400">Protected</span>
-          <div className="relative h-4 w-4">
-            <div className="absolute h-full w-full rounded-full bg-green-500 animate-ping"></div>
-            <div className="h-full w-full rounded-full bg-green-500"></div>
-          </div>
+          <Shield className="w-6 h-6 text-green-400 animate-[pulse-scale_3s_ease-in-out_infinite]" />
+          <span className="text-sm font-medium text-green-400">Guardian Active &bull; Protected</span>
         </div>
       </header>
 

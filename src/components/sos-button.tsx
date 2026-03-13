@@ -3,18 +3,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { ShieldAlert } from 'lucide-react';
 
 const COUNTDOWN_SECONDS = 5;
 
 export function SosButton() {
   const { toast } = useToast();
   const [isHolding, setIsHolding] = useState(false);
+  const [isDispatching, setIsDispatching] = useState(false);
   const [progress, setProgress] = useState(0); // 0 to 100
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const startHolding = () => {
+    if(isDispatching) return;
     setIsHolding(true);
     setCountdown(COUNTDOWN_SECONDS);
     setProgress(0);
@@ -34,21 +37,30 @@ export function SosButton() {
     // Countdown timer for dispatch
     timerRef.current = setTimeout(() => {
       dispatchHelp();
-      reset();
     }, COUNTDOWN_SECONDS * 1000);
   };
 
   const dispatchHelp = () => {
     console.log('Dispatching help!');
+    setIsDispatching(true);
+    setIsHolding(false);
+
     toast({
       title: 'Help Dispatched',
       description: 'Responders are on their way. Live ETA will be provided shortly.',
       variant: 'destructive',
+      duration: 10000,
     });
+    
+    // Reset after a delay to show the dispatched state
+    setTimeout(() => {
+        reset();
+    }, 5000);
   };
 
   const reset = () => {
     setIsHolding(false);
+    setIsDispatching(false);
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -64,11 +76,11 @@ export function SosButton() {
   const cancelHolding = () => {
     if (isHolding && progress < 100) {
       toast({
-        title: 'Cancelled',
-        description: 'You are safe. The emergency request was not sent.',
+        title: 'Cancelled – You are Safe',
+        description: 'The emergency request was not sent.',
       });
+      reset();
     }
-    reset();
   };
   
   useEffect(() => {
@@ -84,14 +96,16 @@ export function SosButton() {
   return (
     <div className="relative flex items-center justify-center w-64 h-64 md:w-80 md:h-80">
       {/* Outer pulse */}
-      <div className="absolute inset-0 rounded-full bg-destructive/20 animate-pulse-scale"></div>
-
+      {!isHolding && !isDispatching && (
+         <div className="absolute inset-0 rounded-full bg-green-500/20 animate-[pulse-scale_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
+      )}
+     
       {/* Progress Ring */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
         <circle
-          className="text-green-500/50"
+          className="text-gray-500/30"
           stroke="currentColor"
-          strokeWidth="4"
+          strokeWidth="2"
           cx="50"
           cy="50"
           r="48"
@@ -109,6 +123,7 @@ export function SosButton() {
           strokeDasharray={2 * Math.PI * 48}
           strokeDashoffset={(2 * Math.PI * 48) * (1 - progress / 100)}
           transform="rotate(-90 50 50)"
+          style={{ filter: `drop-shadow(0 0 8px hsl(var(--accent)))` }}
         />
       </svg>
       
@@ -121,15 +136,23 @@ export function SosButton() {
         onTouchEnd={(e) => { e.preventDefault(); cancelHolding(); }}
         className={cn(
             "relative w-56 h-56 md:w-72 md:h-72 rounded-full text-3xl md:text-4xl font-bold transition-all duration-300 ease-in-out flex items-center justify-center text-center",
-            "border-2 border-gray-500/50 bg-black/50 backdrop-blur-md text-white shadow-2xl",
-            "hover:scale-105 active:scale-95",
-            isHolding && "shadow-[0_0_30px_#00BFFF] scale-105"
+            "border-2 border-gray-500/50 bg-black/65 backdrop-blur-md text-white shadow-2xl",
+            "active:scale-95",
+            !isDispatching && "hover:scale-105",
+            isHolding && "shadow-[0_0_30px_#00BFFF] scale-105",
+            isDispatching && "bg-green-500/90 scale-110 shadow-[0_0_40px_#00FF00] border-green-300"
         )}
       >
-        {isHolding ? (
+        {isDispatching ? (
+            <div className='flex flex-col items-center gap-2'>
+                <ShieldAlert className="w-16 h-16"/>
+                <span className='text-lg font-semibold'>Help Dispatched</span>
+                <span className='text-sm font-normal'>Responders En Route</span>
+            </div>
+        ) : isHolding ? (
           <div className='flex flex-col items-center'>
             <span className='text-5xl font-bold'>{countdown}</span>
-            <span className='text-sm font-normal tracking-wider'>Hold to send</span>
+            <span className='text-sm font-normal tracking-wider'>Hold to send help</span>
           </div>
         ) : (
           "SOS"

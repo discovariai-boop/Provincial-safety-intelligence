@@ -68,8 +68,8 @@ const config = {
           to: { height: '0' },
         },
         'pulse-scale': {
-          '0%, 100%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(1.05)' },
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.7' },
+          '50%': { transform: 'scale(1.05)', opacity: '1' },
         },
         'gravity-drop': {
           from: { transform: 'translateY(-100%)', opacity: '0' },
@@ -79,6 +79,10 @@ const config = {
           from: { opacity: '0', transform: 'translateY(20px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        'screen-flash': {
+            '0%, 100%': { opacity: 0.8 },
+            '50%': { opacity: 1 },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -86,6 +90,7 @@ const config = {
         'pulse-scale': 'pulse-scale 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'gravity-drop': 'gravity-drop 0.5s cubic-bezier(0.32, 0, 0.67, 0) forwards',
         'stagger-fade-in': 'stagger-fade-in 0.5s ease-out forwards',
+        'screen-flash': 'screen-flash 1.5s ease-in-out infinite',
       },
     },
   },

@@ -66,8 +66,8 @@ export default function AlertsPage() {
         {mockAlerts.map((alert, index) => (
           <Card
             key={alert.id}
-            className="shadow-none animate-stagger-fade-in"
-            style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}
+            className="shadow-none animate-gravity-drop"
+            style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'backwards' }}
           >
             <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
                 <div className="space-y-1">
