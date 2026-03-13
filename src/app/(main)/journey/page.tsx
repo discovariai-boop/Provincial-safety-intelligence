@@ -6,6 +6,7 @@ import type { Responder } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Smartphone } from 'lucide-react';
 import { VoiceAssistant } from '@/components/voice-assistant';
+import { DualCameraView } from '@/components/dual-camera-view';
 
 export default function JourneyPage() {
   const fullMapImage = PlaceHolderImages.find((img) => img.id === 'full-map');
@@ -24,19 +25,22 @@ export default function JourneyPage() {
         <Card className="shadow-none">
           <CardHeader>
             <CardTitle>Live Journey Map</CardTitle>
-            <CardDescription>Real-time tracking and hazard overlays.</CardDescription>
+            <CardDescription>Real-time tracking with dual-camera AI monitoring.</CardDescription>
           </CardHeader>
           <CardContent>
-            {fullMapImage && (
-              <Image
-                src={fullMapImage.imageUrl}
-                alt={fullMapImage.description}
-                data-ai-hint={fullMapImage.imageHint}
-                width={1200}
-                height={900}
-                className="rounded-lg object-cover aspect-video"
-              />
-            )}
+            <div className="relative">
+              {fullMapImage && (
+                <Image
+                  src={fullMapImage.imageUrl}
+                  alt={fullMapImage.description}
+                  data-ai-hint={fullMapImage.imageHint}
+                  width={1200}
+                  height={900}
+                  className="rounded-lg object-cover aspect-video"
+                />
+              )}
+              <DualCameraView />
+            </div>
           </CardContent>
         </Card>
         <Card className="shadow-none">
