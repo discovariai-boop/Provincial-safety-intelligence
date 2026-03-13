@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
+import { SosButton } from '@/components/sos-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Bell, Map, Mic } from 'lucide-react';
+import { Bell, Map, Mic, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -22,18 +22,7 @@ export default function Dashboard() {
       </header>
 
       <main className="flex flex-col items-center gap-8">
-        <div className="relative flex items-center justify-center w-64 h-64 md:w-80 md:h-80">
-          <div className="absolute inset-0 rounded-full bg-destructive/20 animate-pulse-scale"></div>
-          <Button
-            variant="destructive"
-            className="relative w-56 h-56 md:w-72 md:h-72 rounded-full text-3xl md:text-4xl font-bold shadow-none hover:scale-105 active:scale-95 transition-transform"
-            style={{
-              transitionTimingFunction: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            }}
-          >
-            SOS
-          </Button>
-        </div>
+        <SosButton />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
           <Card className="md:col-span-2 shadow-none transition-transform hover:scale-[1.02]">
@@ -74,7 +63,7 @@ export default function Dashboard() {
                   <Mic className="w-6 h-6 text-accent" />
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">Use your voice to call for help.</p>
+                  <p className="text-sm text-muted-foreground">Always listening for emergency commands.</p>
                 </CardContent>
               </Card>
             </Link>
@@ -86,6 +75,17 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">See recent safety notifications.</p>
+                </CardContent>
+              </Card>
+            </Link>
+             <Link href="/profile">
+              <Card className="shadow-none hover:bg-accent/50 transition-colors h-full">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-lg font-medium">Family Shield</CardTitle>
+                  <ShieldCheck className="w-6 h-6 text-accent" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Manage family contacts and alerts.</p>
                 </CardContent>
               </Card>
             </Link>

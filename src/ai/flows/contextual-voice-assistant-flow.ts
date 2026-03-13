@@ -88,20 +88,40 @@ const getRouteSafetyStatus = ai.defineTool(
   }
 );
 
+// New tool for dispatching emergency services
+const dispatchEmergencyService = ai.defineTool(
+  {
+    name: 'dispatchEmergencyService',
+    description: 'Dispatches a specific emergency service to the user\'s location. Use this for direct commands like "send police", "I need an ambulance", etc.',
+    inputSchema: z.object({
+      service: z.enum(['Police', 'Ambulance', 'Fire', 'Security', 'Medical']).describe('The type of emergency service to dispatch.'),
+      location: z.string().describe("The user's current location or where the service is needed."),
+    }),
+    outputSchema: z.string().describe('A confirmation message that the service has been dispatched.'),
+  },
+  async (input) => {
+    // In a real application, this would trigger a dispatch workflow.
+    console.log(`Dispatching ${input.service} to ${input.location}`);
+    return `${input.service} dispatched to your location. Help is on the way. Family has been notified.`;
+  }
+);
+
 
 // Genkit Prompt Definition
 const contextualVoiceAssistantPrompt = ai.definePrompt({
   name: 'contextualVoiceAssistantPrompt',
   input: {schema: ContextualVoiceAssistantInputSchema},
   output: {schema: ContextualVoiceAssistantOutputSchema},
-  tools: [getNearestAccidentInfo, getRouteSafetyStatus], // Make tools available to the LLM
+  tools: [getNearestAccidentInfo, getRouteSafetyStatus, dispatchEmergencyService], // Make tools available to the LLM
   system: `You are Provincial Intelligent Safety, a 24/7 Guardian Angel AI for citizens in Limpopo, South Africa.
   Your primary goal is to provide real-time, context-aware, and lifesaving information.
   You are concise, direct, and always prioritize the user's safety.
-  When appropriate, use the available tools to gather information before responding.
-  If the user's question relates to accidents or incidents, use the 'getNearestAccidentInfo' tool.
-  If the user's question relates to the safety of a route, use the 'getRouteSafetyStatus' tool.
-  Always incorporate the information from the tools into your answer.
+
+  If the user issues a direct command to dispatch an emergency service (e.g., "send police", "I need an ambulance", "help me"), use the 'dispatchEmergencyService' tool.
+  For general questions about accidents or incidents, use the 'getNearestAccidentInfo' tool.
+  For questions about the safety of a route, use the 'getRouteSafetyStatus' tool.
+  
+  Always incorporate the information from the tools into your answer. If a tool returns a confirmation message, that is your answer.
   If a tool cannot be used (e.g., missing location information) or does not return relevant data, state that you cannot provide that specific real-time data but offer general safety advice.
 
   Current user context:
