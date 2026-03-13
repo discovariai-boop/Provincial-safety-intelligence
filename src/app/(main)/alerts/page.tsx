@@ -18,14 +18,14 @@ const mockAlerts: Alert[] = [
     title: 'Pothole Repairs Ahead',
     description: 'Road maintenance and pothole repairs are causing delays on the N1 North. Expect a 15-minute delay.',
     timestamp: '2024-07-29T13:45:00Z',
-    thumbnailUrl: 'https://picsum.photos/seed/pothole/200/150',
+    thumbnailUrl: PlaceHolderImages.find((img) => img.id === 'pothole-thumbnail')?.imageUrl || '',
     location: 'N1 North, near Mokopane',
   },
   {
     id: '3',
     title: 'Accident Reported',
     description: 'Minor collision involving two vehicles. No serious injuries reported, but traffic is slow.',
-    timestamp: '2024-07-29T12:10:00Z',
+    timestamp: '2024-07-28T12:10:00Z',
     thumbnailUrl: 'https://picsum.photos/seed/collision/200/150',
     location: 'Thabo Mbeki St, Polokwane',
   },
@@ -33,8 +33,8 @@ const mockAlerts: Alert[] = [
     id: '4',
     title: 'Community Protest Action',
     description: 'A protest is underway near the Mall of the North. Roads are blocked. Use alternative routes.',
-    timestamp: '2024-07-28T09:05:00Z',
-    thumbnailUrl: 'https://picsum.photos/seed/protest/200/150',
+    timestamp: '2024-07-25T09:05:00Z',
+    thumbnailUrl: PlaceHolderImages.find((img) => img.id === 'protest-thumbnail')?.imageUrl || '',
     location: 'Mall of the North, Polokwane',
   },
 ];
@@ -51,7 +51,8 @@ function formatTimeAgo(dateString: string) {
     if (seconds < 60) return `${seconds} seconds ago`;
     if (minutes < 60) return `${minutes} minutes ago`;
     if (hours < 24) return `${hours} hours ago`;
-    return `${days} days ago`;
+    if (days <= 7) return `${days} days ago`;
+    return date.toLocaleDateString('en-ZA');
 }
 
 export default function AlertsPage() {

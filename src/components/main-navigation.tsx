@@ -1,18 +1,9 @@
 'use client';
 
-import {
-  Home,
-  Map,
-  Bell,
-  User,
-  Shield,
-  LifeBuoy,
-  LogOut,
-} from 'lucide-react';
+import { Home, Map, Bell, User, LifeBuoy, LogOut, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { GuardianLogo } from '@/components/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -34,17 +24,17 @@ const navItems = [
   { href: '/profile', icon: User, label: 'Profile' },
 ];
 
-export function MainSidebar() {
+export function MainNavigation() {
   const pathname = usePathname();
 
-  return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
+  const DesktopNav = () => (
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background/95 backdrop-blur-sm sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
           href="#"
           className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
         >
-          <GuardianLogo className="h-5 w-5 transition-all group-hover:scale-110" />
+          <Shield className="h-5 w-5 transition-all group-hover:scale-110" />
           <span className="sr-only">Guardian</span>
         </Link>
         <TooltipProvider>
@@ -99,5 +89,32 @@ export function MainSidebar() {
         </DropdownMenu>
       </nav>
     </aside>
+  );
+
+  const MobileNav = () => (
+    <nav className="fixed bottom-0 left-0 right-0 z-10 border-t bg-background/95 backdrop-blur-sm sm:hidden">
+      <div className="grid h-16 grid-cols-4 items-center justify-around">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 text-muted-foreground',
+              pathname === item.href ? 'text-primary' : ''
+            )}
+          >
+            <item.icon className="h-6 w-6" />
+            <span className="text-xs">{item.label}</span>
+          </Link>
+        ))}
+      </div>
+    </nav>
+  );
+
+  return (
+    <>
+      <DesktopNav />
+      <MobileNav />
+    </>
   );
 }

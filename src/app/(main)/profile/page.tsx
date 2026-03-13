@@ -9,6 +9,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import React, { useRef, useState } from 'react';
+import { Upload } from 'lucide-react';
 
 const emergencyContactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -42,6 +45,20 @@ export default function ProfilePage() {
     defaultValues,
     mode: 'onChange',
   });
+  
+  const [avatarPreview, setAvatarPreview] = useState<string | null>('https://picsum.photos/seed/user-avatar/100');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   function onSubmit(data: ProfileFormValues) {
     toast({
@@ -60,21 +77,46 @@ export default function ProfilePage() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
+            <div className="flex items-center gap-6">
+              <div className='relative'>
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={avatarPreview || ''} />
+                  <AvatarFallback>{defaultValues.name?.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <Button 
+                  type="button" 
+                  size="icon" 
+                  className="absolute bottom-0 right-0 rounded-full h-8 w-8"
+                  onClick={() => fileInputRef.current?.click()}
+                  >
+                  <Upload className="h-4 w-4" />
+                </Button>
+                <Input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleAvatarChange} 
+                  className="hidden" 
+                  accept="image/*"
+                />
+              </div>
+              <div className="grid flex-1 gap-8">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+             <FormField
                 control={form.control}
                 name="idNumber"
                 render={({ field }) => (
@@ -87,7 +129,6 @@ export default function ProfilePage() {
                   </FormItem>
                 )}
               />
-            </div>
             
             <Separator/>
 

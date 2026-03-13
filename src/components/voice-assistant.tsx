@@ -4,8 +4,10 @@ import { contextualVoiceAssistant, type ContextualVoiceAssistantOutput } from '@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Mic, MicOff, LoaderCircle } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { Mic, MicOff, LoaderCircle, ShieldAlert } from 'lucide-react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+
+const HOTWORD = 'guardian';
 
 export function VoiceAssistant() {
   const { toast } = useToast();
@@ -14,62 +16,18 @@ export function VoiceAssistant() {
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState<ContextualVoiceAssistantOutput | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [hotwordDetected, setHotwordDetected] = useState(false);
 
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast({
-        variant: 'destructive',
-        title: 'Browser Not Supported',
-        description: 'Your browser does not support voice recognition.',
-      });
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      setTranscript('');
-      setResponse(null);
-    };
-
-    recognition.onresult = (event) => {
-      const currentTranscript = Array.from(event.results)
-        .map((result) => result[0])
-        .map((result) => result.transcript)
-        .join('');
-      setTranscript(currentTranscript);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.onerror = (event) => {
-      toast({
-        variant: 'destructive',
-        title: 'Voice Recognition Error',
-        description: event.error,
-      });
-      setIsListening(false);
-    };
-
-    recognitionRef.current = recognition;
-  }, [toast]);
-
-  const handleVoiceCommand = async (question: string) => {
+  const handleVoiceCommand = useCallback(async (question: string) => {
     if (!question.trim()) return;
 
     setIsLoading(true);
     setResponse(null);
+    setTranscript(question); // Show the question being processed
 
     try {
       const location = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
       });
 
       const res = await contextualVoiceAssistant({
@@ -94,24 +52,77 @@ export function VoiceAssistant() {
         title: 'Error',
         description: errorMessage,
       });
+      setResponse({ answer: "Sorry, I couldn't get a response." });
     } finally {
       setIsLoading(false);
+      setHotwordDetected(false); // Reset hotword detection
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
-    if (!isListening && transcript.trim()) {
-      handleVoiceCommand(transcript);
+    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast({
+        variant: 'destructive',
+        title: 'Browser Not Supported',
+        description: 'Your browser does not support voice recognition.',
+      });
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isListening]);
 
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true; // Listen continuously
+    recognition.interimResults = false; // Only get final results
+    recognition.lang = 'en-US';
 
-  const toggleListening = () => {
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => {
+      setIsListening(false);
+      // Automatically restart listening unless it was manually stopped
+      if (recognitionRef.current) {
+        recognitionRef.current.start();
+      }
+    };
+    recognition.onerror = (event) => {
+      if (event.error !== 'no-speech') {
+        console.error('Speech recognition error:', event.error);
+      }
+    };
+
+    recognition.onresult = (event) => {
+      const lastResult = event.results[event.results.length - 1];
+      const text = lastResult[0].transcript.trim().toLowerCase();
+
+      if (hotwordDetected) {
+        // If hotword was just said, the next phrase is the command
+        handleVoiceCommand(text);
+      } else if (text.includes(HOTWORD)) {
+        // Hotword detected, now wait for the command
+        setHotwordDetected(true);
+        setTranscript(`Guardian is listening...`);
+        // We don't need to call the AI yet, just wait for the next result.
+      }
+    };
+    
+    recognitionRef.current = recognition;
+    recognition.start();
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.onend = null; // prevent restart on unmount
+        recognitionRef.current.stop();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hotwordDetected, handleVoiceCommand]);
+
+  const toggleListeningManually = () => {
     if (!recognitionRef.current) return;
     if (isListening) {
       recognitionRef.current.stop();
     } else {
+      setHotwordDetected(true); // Manually activate listening for command
+      setTranscript('Guardian is listening...');
       recognitionRef.current.start();
     }
   };
@@ -119,22 +130,22 @@ export function VoiceAssistant() {
   return (
     <Card className="shadow-none w-full max-w-lg mx-auto" id="voice-emergency">
       <CardHeader>
-        <CardTitle className="text-center">Voice Emergency</CardTitle>
+        <CardTitle className="text-center">Voice Assistant</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <p className="text-muted-foreground text-center">
-          Tap the button and speak your emergency.
+          Say <span className="font-bold text-foreground">"{HOTWORD}"</span> then ask a question,
           <br />
-          e.g., "There's an accident ahead" or "Is the R81 safe?"
+          or tap the button to speak.
         </p>
 
         <Button
-          onClick={toggleListening}
+          onClick={toggleListeningManually}
           size="icon"
           className="w-24 h-24 rounded-full bg-accent hover:bg-accent/90 relative transition-all duration-300 ease-in-out"
         >
-          {isListening && <div className="absolute inset-0 rounded-full bg-accent/50 animate-pulse-scale" />}
-          {isListening ? <MicOff className="w-10 h-10" /> : <Mic className="w-10 h-10" />}
+          {hotwordDetected && <div className="absolute inset-0 rounded-full bg-blue-500/50 animate-pulse-scale" />}
+          {isListening ? <Mic className="w-10 h-10" /> : <MicOff className="w-10 h-10" />}
         </Button>
 
         <div className="w-full min-h-[80px] p-4 rounded-lg bg-background border border-border flex items-center justify-center">
@@ -142,7 +153,7 @@ export function VoiceAssistant() {
             <LoaderCircle className="w-6 h-6 animate-spin text-muted-foreground" />
           ) : (
             <p className="text-center text-foreground font-medium">
-              {response ? response.answer : (transcript || '...') }
+              {response ? response.answer : (transcript || 'Say "Guardian" to start...') }
             </p>
           )}
         </div>

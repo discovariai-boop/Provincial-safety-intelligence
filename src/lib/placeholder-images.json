@@ -2,27 +2,45 @@
   "placeholderImages": [
     {
       "id": "map-preview",
-      "description": "A preview of a map with a route.",
-      "imageUrl": "https://picsum.photos/seed/map-preview/800/600",
-      "imageHint": "map route"
+      "description": "A preview of a map with a route on a South African road.",
+      "imageUrl": "https://picsum.photos/seed/limpopo-road/800/600",
+      "imageHint": "road map"
     },
     {
       "id": "full-map",
-      "description": "A full-screen interactive map.",
-      "imageUrl": "https://picsum.photos/seed/full-map/1200/900",
+      "description": "A full-screen interactive map of Polokwane.",
+      "imageUrl": "https://picsum.photos/seed/polokwane-map/1200/900",
       "imageHint": "city map"
     },
     {
       "id": "responder-avatar",
-      "description": "Avatar for an emergency responder.",
-      "imageUrl": "https://picsum.photos/seed/responder/100/100",
-      "imageHint": "portrait person"
+      "description": "Avatar for a South African police officer.",
+      "imageUrl": "https://picsum.photos/seed/sa-police/100/100",
+      "imageHint": "police officer"
     },
     {
       "id": "alert-thumbnail",
-      "description": "Thumbnail for an alert notification.",
-      "imageUrl": "https://picsum.photos/seed/alert-thumb/200/150",
-      "imageHint": "road accident"
+      "description": "Thumbnail for a car crash alert.",
+      "imageUrl": "https://picsum.photos/seed/car-crash-sa/200/150",
+      "imageHint": "car accident"
+    },
+    {
+      "id": "welcome-hero",
+      "description": "A scenic view of the Limpopo landscape.",
+      "imageUrl": "https://picsum.photos/seed/limpopo-view/1200/800",
+      "imageHint": "limpopo landscape"
+    },
+    {
+      "id": "protest-thumbnail",
+      "description": "Thumbnail for a protest alert.",
+      "imageUrl": "https://picsum.photos/seed/sa-protest/200/150",
+      "imageHint": "protest action"
+    },
+    {
+      "id": "pothole-thumbnail",
+      "description": "Thumbnail for a pothole alert.",
+      "imageUrl": "https://picsum.photos/seed/sa-pothole/200/150",
+      "imageHint": "road pothole"
     }
   ]
 }
