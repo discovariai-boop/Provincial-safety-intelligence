@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "map-preview",
+      "description": "A preview of a map with a route.",
+      "imageUrl": "https://picsum.photos/seed/map-preview/800/600",
+      "imageHint": "map route"
+    },
+    {
+      "id": "full-map",
+      "description": "A full-screen interactive map.",
+      "imageUrl": "https://picsum.photos/seed/full-map/1200/900",
+      "imageHint": "city map"
+    },
+    {
+      "id": "responder-avatar",
+      "description": "Avatar for an emergency responder.",
+      "imageUrl": "https://picsum.photos/seed/responder/100/100",
+      "imageHint": "portrait person"
+    },
+    {
+      "id": "alert-thumbnail",
+      "description": "Thumbnail for an alert notification.",
+      "imageUrl": "https://picsum.photos/seed/alert-thumb/200/150",
+      "imageHint": "road accident"
+    }
+  ]
 }
