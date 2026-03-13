@@ -1,6 +1,12 @@
 {
   "placeholderImages": [
     {
+      "id": "app-background",
+      "description": "A scenic view of the Limpopo landscape at dusk, with baobab trees and rolling hills.",
+      "imageUrl": "https://picsum.photos/seed/limpopo-dusk/1920/1080",
+      "imageHint": "limpopo landscape dusk"
+    },
+    {
       "id": "map-preview",
       "description": "A preview of a map with a route on a South African road.",
       "imageUrl": "https://picsum.photos/seed/limpopo-road/800/600",

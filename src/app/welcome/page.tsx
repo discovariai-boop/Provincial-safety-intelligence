@@ -5,15 +5,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import React, { useRef, useState } from 'react';
-import { Upload, Shield } from 'lucide-react';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Upload, Shield, User } from 'lucide-react';
 import Link from 'next/link';
 
 const profileSchema = z.object({
@@ -34,7 +31,6 @@ export default function WelcomePage() {
   
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const heroImage = PlaceHolderImages.find(img => img.id === 'welcome-hero');
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -58,17 +54,7 @@ export default function WelcomePage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-background">
-      {heroImage && (
-        <Image 
-          src={heroImage.imageUrl}
-          alt={heroImage.description}
-          fill
-          className="object-cover opacity-20"
-          data-ai-hint={heroImage.imageHint}
-        />
-      )}
-      <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-lg shadow-2xl">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary">
@@ -165,6 +151,5 @@ export default function WelcomePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
   );
 }
